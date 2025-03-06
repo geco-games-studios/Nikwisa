@@ -1,0 +1,86 @@
+
+// Function to refresh access token
+const refreshAccessToken = async (refreshToken: string) => {
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_ENDPOINT}/login/`,
+      { refresh: refreshToken }
+    );
+    const { access } = response.data;
+    Cookies.set("access_token", access);
+    return access;
+  } catch (error) {
+    console.error("Error refreshing access token:", error);
+    throw new Error("Token refresh failed");
+  }
+};
+
+export const loginUser = async (username: string, password: string) => {
+  try {
+    // Make API request to fetch the tokens
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_ENDPOINT}/login/`,
+      {
+        username,
+        password,
+      }
+    );
+
+    const { access, refresh }: Tokens = response.data;
+
+    // Store tokens in cookies
+    Cookies.set("access_token", access);
+    Cookies.set("refresh_token", refresh);
+
+    // Fetch user data using the access token
+    let user = null;
+    try {
+      const userResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/users/`, {
+        headers: {
+          Authorization: `Bearer ${access}`,
+        },
+      });
+
+      user = userResponse.data;
+    } catch (userError) {
+      console.error("Failed to fetch user data:", userError);
+      // Provide a fallback user object or log out the user
+      user = { id: 0, username: "Guest", email: "" }; // Example fallback
+    }
+
+    // Refresh the access token
+    const newAccessToken = await refreshAccessToken(refresh);
+
+    // Return tokens and user data (user can be null if fetching user fails)
+    return { access: newAccessToken, refresh, user };
+  } catch (error) {
+    console.error("Error logging in:", error);
+    throw new Error("Login failed");
+  }
+};
+
+// Function to fetch user data with token refresh logic
+export const fetchUserData = async () => {
+  let access = getCookie("access_token");
+  const refresh = getCookie("refresh_token");
+
+  if (!access && refresh) {
+    access = await refreshAccessToken(refresh);
+  }
+
+  if (access) {
+    try {
+      const userResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/users/`, {
+        headers: {
+          Authorization: `Bearer ${access}`,
+        },
+      });
+      return userResponse.data;
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      throw new Error("Failed to fetch user data");
+    }
+  } else {
+    throw new Error("No valid tokens available");
+  }
+};

@@ -1,0 +1,32 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Product 1",
+      "description": "Description of product 1",
+      "price": "20.00",
+      "image": "https://via.placeholder.com/150",
+      "stock": 100,
+      "rating": 4.5,
+      "category": "electronics"
+    },
+    {
+      "id": 2,
+      "name": "Product 2",
+      "description": "Description of product 2",
+      "price": "50.00",
+      "image": "https://via.placeholder.com/150",
+      "stock": 200,
+      "rating": 4.0,
+      "category": "home"
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "electronics",
+      "image": "https://via.placeholder.com/100"
+    },
+    { "id": 2, "name": "home", "image": "https://via.placeholder.com/100" }
+  ]
+}

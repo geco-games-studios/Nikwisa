@@ -1,0 +1,13 @@
+.dashboard-layout {
+  font-family: "Poppins", sans-serif;
+}
+
+.dashboard-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.dashboard-main {
+  min-height: 100vh;
+}

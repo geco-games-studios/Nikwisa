@@ -1,0 +1,84 @@
+Here’s a revised database schema including all your missing fields like rating, reviewsCount, image, and photos. I’ll also provide an example store object with just one offering and one review.
+
+Database Tables
+1. stores
+Column	Type	Description
+id	UUID (PK)	Unique identifier for the store
+name	VARCHAR	Name of the store
+location	VARCHAR	Physical location of the store
+phoneNumber	VARCHAR	Store's contact number
+whatsappNumber	VARCHAR	Store's WhatsApp contact
+overview	TEXT	Brief description of the store
+rating	FLOAT	Average rating (calculated dynamically)
+reviewsCount	INT	Total number of reviews
+image	VARCHAR	Main image URL for the store
+photos	JSON ARRAY	Array of photo URLs
+createdAt	TIMESTAMP	When the store was created
+updatedAt	TIMESTAMP	When the store was last updated
+
+2. offerings
+Column	Type	Description
+id	UUID (PK)	Unique identifier for the offering
+storeId	UUID (FK)	Reference to the stores table
+name	VARCHAR	Name of the offering
+description	TEXT	Description of the offering
+price	DECIMAL	Price of the offering
+image	VARCHAR	Image URL for the offering
+createdAt	TIMESTAMP	When the offering was created
+updatedAt	TIMESTAMP	When the offering was last updated
+
+3. reviews
+Column	Type	Description
+id	UUID (PK)	Unique identifier for the review
+storeId	UUID (FK)	Reference to the stores table
+name	VARCHAR	Reviewer's name
+image	VARCHAR	Reviewer's profile image
+rating	INT	Rating (e.g., 1-5)
+reviewText	TEXT	Review content
+createdAt	TIMESTAMP	When the review was created
+
+
+
+To create a realistic store model with all the properties you described, it's essential to separate data that is "immutable" at creation (e.g., basic store details) from data that evolves over time (e.g., offerings, ratings, reviews). This design ensures scalability, user-friendliness, and accuracy as the store grows and interacts with customers.
+
+Here’s a structured breakdown:
+
+1. Separation of Concerns
+Organize the store into logical components:
+
+Core Store Data (Immutable at Creation)
+This data is added when a store is first created and rarely changes.
+
+id: Unique identifier for the store (auto-generated).
+name: Store name.
+location: Store location (address, city, etc.).
+phoneNumber: Primary contact number.
+whatsappNumber: WhatsApp contact.
+overview: A general description of the store.
+photos: Initial set of photos for the store.
+Dynamic Store Data (Editable after Creation)
+This includes data that evolves with time and user activity:
+
+Offerings/Packages:
+
+id: Unique identifier for each offering (auto-generated).
+name: Name of the offering.
+description: Details of the service or product.
+price: Price point for the offering.
+image: Image of the offering.
+These can be added, updated, or deleted at any time.
+Reviews and Ratings:
+
+Generated dynamically based on customer interactions.
+Cannot be added by the store creator directly.
+Example properties:
+id: Unique review ID.
+name: Customer's name.
+image: Profile photo of reviewer.
+rating: Customer-provided rating (1–5).
+reviewText: Feedback text.
+reviewCount: Total number of reviews (aggregated).
+Store Rating:
+
+A derived value calculated as the average of all customer ratings.
+
